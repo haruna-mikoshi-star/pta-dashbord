@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>令和8年度 PTA活動ダッシュボード</title>
+  
+  <!-- Reactの読み込み -->
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <!-- JSXをブラウザで変換するためのBabel -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <!-- 見た目を整えるTailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- アイコン表示用のFontAwesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-50">
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState } = React;
+
+    const App = () => {
+      const [activeTab, setActiveTab] = useState('annual');
+
+      const tabs = [
+        { id: 'annual', label: '年間スケジュール', icon: 'fa-regular fa-calendar' },
+        { id: 'april', label: '4月詳細タスク', icon: 'fa-regular fa-square-check' },
+        { id: 'tools', label: '連絡ツール検討', icon: 'fa-solid fa-mobile-screen' },
+      ];
+
+      return (
+        <div className="min-h-screen font-sans text-slate-800 p-4 md:p-8">
+          <div className="max-w-5xl mx-auto">
+            {/* ヘッダー */}
+            <header className="mb-8 text-center md:text-left">
+              <h1 className="text-3xl font-bold text-slate-900 mb-2">令和8年度 PTA活動ダッシュボード</h1>
+              <p className="text-slate-600">池上小学校 PTA本部の年間計画と直近のタスク可視化</p>
+            </header>
+
+            {/* タブナビゲーション */}
+            <div className="flex flex-wrap gap-2 mb-6 bg-white p-2 rounded-xl shadow-sm">
+              {tabs.map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-all duration-200 flex-1 md:flex-none justify-center ${
+                    activeTab === tab.id
+                      ? 'bg-blue-600 text-white shadow-md'
+                      : 'bg-transparent text-slate-600 hover:bg-slate-100'
+                  }`}
+                >
+                  <i className={tab.icon}></i>
+                  <span>{tab.label}</span>
+                </button>
+              ))}
+            </div>
+
+            {/* コンテンツエリア */}
+            <main className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 md:p-8 min-h-[600px]">
+              {activeTab === 'annual' && <AnnualSchedule />}
+              {activeTab === 'april' && <AprilTasks />}
+              {activeTab === 'tools' && <ToolEvaluation />}
+            </main>
+          </div>
+        </div>
+      );
+    };
+
+    /* --- コンポーネント: 年間スケジュール --- */
+    const AnnualSchedule = () => {
+      const schedule = [
+        { month: '4月', events: ['池上まち巡り研修 (4/3)', '入学式 (4/6)', '新1年生保護者会 (4/14)', '四部会 (4/18)', '役員会①'], tool: 'ツールの選定 → 学校へ報告' },
+        { month: '5月', events: ['運営委員会①・総会①', '給食費決算報告監査', '運動発表会打ち合わせ'], tool: 'ツール登録開始、保護者に案内' },
+        { month: '6-8月', events: ['第1回地域教育連絡協議会', '池小サマーフェスタ', 'いけがみ祭り'], tool: '（順次登録推進期間）' },
+        { month: '9月', events: ['役員会③', '運営委員会②', '池小フェスタ', '給食費決算報告監査'], tool: 'R8年度中に全保護者の登録を完了' },
+        { month: '10-1月', events: ['池上スポーツまつり', '給食試食会', '地域ふれあいコンサート'], tool: '' },
+        { month: '2-3月', events: ['役員会⑤', '運営委員会③・総会②', '6年生の卒業を祝う会', '卒業式'], tool: 'R9年度からの完全デジタル化準備' },
+      ];
+
+      return (
+        <div className="animate-fade-in space-y-8">
+          <h2 className="text-2xl font-bold mb-6 flex items-center gap-2 text-slate-800">
+            <i className="fa-regular fa-calendar text-blue-500"></i>
+            令和8年度 年間スケジュール
+          </h2>
+          <div className="relative border-l-4 border-blue-100 ml-4 md:ml-6 space-y-8 py-4">
+            {schedule.map((item, index) => (
+              <div key={index} className="relative pl-6 md:pl-8">
+                {/* タイムラインの丸 */}
+                <div className="absolute -left-[14px] top-1 w-6 h-6 bg-blue-500 rounded-full border-4 border-white shadow-sm"></div>
+                
+                <div className="flex flex-col md:flex-row gap-4 md:gap-8">
+                  {/* 月 */}
+                  <div className="w-20 pt-1">
+                    <span className="text-xl font-bold text-blue-600">{item.month}</span>
+                  </div>
+                  
+                  {/* 行事カード */}
+                  <div className="flex-1 bg-slate-50 p-4 rounded-xl border border-slate-200">
+                    <h3 className="font-semibold text-slate-700 mb-2 flex items-center gap-2">
+                      <i className="fa-regular fa-circle-check text-emerald-500"></i>
+                      主な行事・活動
+                    </h3>
+                    <ul className="list-disc list-inside text-slate-600 space-y-1 ml-1">
+                      {item.events.map((ev, i) => <li key={i}>{ev}</li>)}
+                    </ul>
+                  </div>
+
+                  {/* ツール進行カード */}
+                  {item.tool && (
+                    <div className="flex-1 bg-blue-50 p-4 rounded-xl border border-blue-100">
+                      <h3 className="font-semibold text-blue-800 mb-2 flex items-center gap-2">
+                        <i className="fa-solid fa-mobile-screen text-blue-500"></i>
+                        連絡ツール導入の動き
+                      </h3>
+                      <p className="text-blue-700">{item.tool}</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    };
+
+    /* --- コンポーネント: 4月詳細タスク --- */
+    const AprilTasks = () => {
+      return (
+        <div className="animate-fade-in space-y-8">
+          <h2 className="text-2xl font-bold mb-2 flex items-center gap-2 text-slate-800">
+            <i className="fa-regular fa-square-check text-blue-500"></i>
+            4月の重点タスク（直近の動き）
+          </h2>
+
+          <div className="grid md:grid-cols-2 gap-6">
+            {/* 4/3 まち巡り */}
+            <div className="border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
+              <div className="bg-emerald-500 text-white p-4">
+                <h3 className="text-lg font-bold flex items-center gap-2">
+                  <i className="fa-regular fa-calendar"></i>
+                  4/3(金) 池上まち巡り研修
+                </h3>
+              </div>
+              <div className="p-5 bg-white space-y-4">
+                <div className="flex items-start gap-3">
+                  <i className="fa-regular fa-clock text-slate-400 mt-1 flex-shrink-0 w-5 text-center"></i>
+                  <div>
+                    <p className="font-bold text-slate-800">12:15</p>
+                    <p className="text-slate-600">ピロティ集合・校長挨拶・PTA会長挨拶（30秒程度）</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <i className="fa-solid fa-users text-slate-400 mt-1 flex-shrink-0 w-5 text-center"></i>
+                  <div>
+                    <p className="font-bold text-slate-800">12:15 - 13:00</p>
+                    <p className="text-slate-600">各グループで行動（誘導は学校側で実施）</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <i className="fa-solid fa-circle-info text-slate-400 mt-1 flex-shrink-0 w-5 text-center"></i>
+                  <div>
+                    <p className="font-bold text-slate-800">13:00 - 14:00</p>
+                    <p className="text-slate-600">グループごとに昼食（支払いは各自） → 流れ解散</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* 4/6 入学式 */}
+            <div className="border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
+              <div className="bg-blue-600 text-white p-4">
+                <h3 className="text-lg font-bold flex items-center gap-2">
+                  <i className="fa-regular fa-calendar"></i>
+                  4/6(月) 入学式 当日スケジュール
+                </h3>
+              </div>
+              <div className="p-5 bg-white space-y-4">
+                <div className="flex items-start gap-3">
+                  <i className="fa-regular fa-clock text-slate-400 mt-1 flex-shrink-0 w-5 text-center"></i>
+                  <div>
+                    <p className="font-bold text-slate-800">8:50</p>
+                    <p className="text-slate-600">ピロティ集合・受付準備</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <i className="fa-solid fa-camera text-slate-400 mt-1 flex-shrink-0 w-5 text-center"></i>
+                  <div>
+                    <p className="font-bold text-slate-800">9:00 - 9:10</p>
+                    <p className="text-slate-600 text-sm bg-orange-50 text-orange-800 p-2 rounded border border-orange-100 mt-1">
+                      写真撮影（本部役員はフォーマルな服装で）
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <i className="fa-regular fa-square-check text-slate-400 mt-1 flex-shrink-0 w-5 text-center"></i>
+                  <div>
+                    <p className="font-bold text-slate-800">9:20 - 9:50</p>
+                    <p className="text-slate-600 font-medium text-blue-700">新1年生 受付（最重要ミッション！）</p>
+                    <p className="text-sm text-slate-500 mt-1">終了後、片付けしだい解散（※会長は式典列席のため中座）</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* 受付フロー図 */}
+          <div className="bg-slate-50 p-6 rounded-2xl border border-slate-200 mt-6">
+            <h3 className="font-bold text-lg mb-4 flex items-center gap-2 text-slate-800">
+              <i className="fa-solid fa-users text-blue-500"></i>
+              新1年生受付・名簿処理フロー
+            </h3>
+            
+            <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
+              {/* Step 1 */}
+              <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex-1 w-full text-center">
+                <div className="w-8 h-8 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center font-bold mx-auto mb-2">1</div>
+                <h4 className="font-bold text-sm mb-2">在校生の兄弟確認</h4>
+                <p className="text-xs text-slate-600">保護者に確認し、名簿余白に学年・名前をメモ（双子の場合は末子をメモ）。</p>
+              </div>
+              
+              <i className="fa-solid fa-arrow-right text-slate-300 hidden md:block text-xl"></i>
+              <i className="fa-solid fa-arrow-down text-slate-300 md:hidden text-xl"></i>
+              
+              {/* Step 2 */}
+              <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex-1 w-full text-center">
+                <div className="w-8 h-8 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center font-bold mx-auto mb-2">2</div>
+                <h4 className="font-bold text-sm mb-2">配布物の手渡し</h4>
+                <div className="text-xs text-slate-600 text-left bg-slate-50 p-2 rounded">
+                  <p>・兄弟<strong className="text-blue-600">なし</strong>: 新入生セット ＋ ネームカード</p>
+                  <p>・兄弟<strong className="text-emerald-600">あり</strong>: 新入生セット <strong>のみ</strong></p>
+                </div>
+              </div>
+
+              <i className="fa-solid fa-arrow-right text-slate-300 hidden md:block text-xl"></i>
+              <i className="fa-solid fa-arrow-down text-slate-300 md:hidden text-xl"></i>
+              
+              {/* Step 3 */}
+              <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex-1 w-full text-center">
+                <div className="w-8 h-8 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center font-bold mx-auto mb-2">3</div>
+                <h4 className="font-bold text-sm mb-2">受付後：会計へ連携</h4>
+                <p className="text-xs text-slate-600">名簿を会計へ。会計が家庭数を集計し、庶務が配布用名簿を作成。</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    };
+
+    /* --- コンポーネント: 連絡ツール検討 --- */
+    const ToolEvaluation = () => {
+      return (
+        <div className="animate-fade-in space-y-8">
+          <div className="flex justify-between items-end mb-6">
+            <div>
+              <h2 className="text-2xl font-bold flex items-center gap-2 text-slate-800">
+                <i className="fa-solid fa-mobile-screen text-blue-500"></i>
+                PTA連絡ツール 比較と検討課題
+              </h2>
+              <p className="text-slate-600 mt-2">目的：コスト削減、業務負担軽減、手紙未着の防止</p>
+            </div>
+          </div>
+
+          {/* 比較表 */}
+          <div className="overflow-x-auto rounded-xl border border-slate-200 shadow-sm">
+            <table className="w-full text-left border-collapse bg-white">
+              <thead>
+                <tr className="bg-slate-50 text-slate-800 border-b border-slate-200">
+                  <th className="p-4 font-bold w-1/4">項目</th>
+                  <th className="p-4 font-bold w-3/8 border-l border-slate-200 text-blue-700">① BAND</th>
+                  <th className="p-4 font-bold w-3/8 border-l border-slate-200 text-emerald-700">② スクリレ</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-200">
+                <tr>
+                  <td className="p-4 font-medium text-slate-700 bg-slate-50">投稿・ファイル共有</td>
+                  <td className="p-4 border-l border-slate-200">掲示板投稿（既読機能あり）、ファイル共有可能。本部役員誰でも投稿可。</td>
+                  <td className="p-4 border-l border-slate-200">ファイル共有可能。</td>
+                </tr>
+                <tr>
+                  <td className="p-4 font-medium text-slate-700 bg-slate-50">登録方法</td>
+                  <td className="p-4 border-l border-slate-200">スマホ、PC、ガラケー対応。<br/>(メアド, 電話番号, LINE, AppleID等)</td>
+                  <td className="p-4 border-l border-slate-200">アプリDL後、QRコード登録。<br/>個人情報入力不要。</td>
+                </tr>
+                <tr>
+                  <td className="p-4 font-medium text-slate-700 bg-slate-50">コスト・特典</td>
+                  <td className="p-4 border-l border-slate-200 font-bold text-blue-600">無料</td>
+                  <td className="p-4 border-l border-slate-200 text-slate-700">
+                    初年度は有料プラン(無料お試し後、移行手続き)。<br/>
+                    <span className="text-emerald-600 font-medium text-sm">特典: スクリレポイントを学校備品と交換可</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td className="p-4 font-medium text-slate-700 bg-slate-50">その他の機能</td>
+                  <td className="p-4 border-l border-slate-200">個別連絡機能（メンバー間トーク禁止設定も可能）</td>
+                  <td className="p-4 border-l border-slate-200">-</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          {/* 確認事項・懸念点 */}
+          <div className="bg-orange-50 border border-orange-200 rounded-xl p-6 shadow-sm">
+            <h3 className="font-bold text-orange-800 flex items-center gap-2 mb-4 text-lg">
+              <i className="fa-solid fa-triangle-exclamation"></i>
+              今後の確認・協議事項（第1回役員会に向けて）
+            </h3>
+            <div className="grid md:grid-cols-2 gap-4">
+              <div className="bg-white p-4 rounded-lg border border-orange-100 shadow-sm">
+                <h4 className="font-bold text-slate-800 mb-2 text-sm border-b pb-1">会員登録と個人情報</h4>
+                <ul className="list-disc list-inside text-sm text-slate-600 space-y-2">
+                  <li>ツール登録をもってPTA会員とする場合、個人情報同意書の再提出が必要か？（回収作業の発生）</li>
+                  <li>これを機に非会員が増える可能性の考慮（口座振替用紙の回収について）。</li>
+                </ul>
+              </div>
+              <div className="bg-white p-4 rounded-lg border border-orange-100 shadow-sm">
+                <h4 className="font-bold text-slate-800 mb-2 text-sm border-b pb-1">未登録者・現6年生の扱い</h4>
+                <ul className="list-disc list-inside text-sm text-slate-600 space-y-2">
+                  <li>諸事情で登録できない家庭への対応（学校入り口の紙掲示？個人名はどうする？）。</li>
+                  <li>R8年度の6年生に登録してもらうか？（紙配布や一斉メールで対応する案）。</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    };
+
+    // Reactアプリのレンダリング
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+  
+  <style>
+    /* 簡単なフェードインアニメーション */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-in {
+      animation: fadeIn 0.4s ease-out forwards;
+    }
+  </style>
+</body>
+</html>
